@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Digital Autobiography</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: #010101;
+        overflow-y: hidden;
+      }
+      h2 {
+        color: #000000;
+      }
+      .container {
+        width: 350px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        transition: 0.3s ease-in-out;
+      }
+      .container:hover {
+        transform: translateY(-5px);
+      }
+      input,
+      textarea {
+        width: 90%;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+      input[type="file"] {
+        font-size: 14px;
+      }
+      button {
+        background: linear-gradient(135deg, #ff4b5c, #ff6a00);
+        color: rgb(72, 70, 70);
+        padding: 12px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      button:hover {
+        background: linear-gradient(135deg, #ff6a00, #ff4b5c);
+        transform: scale(1.05);
+      }
+      button:active {
+        transform: scale(1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+      #profilePage {
+        display: none;
+      }
+      .tweet-container {
+        width: 100%;
+        margin: 20px auto;
+        background: rgb(235, 130, 130);
+        padding: 10px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; 
+        max-height: 300px; 
+        transition: all 0.3s ease;
+        padding-bottom: 20px;
+      }
+      .tweet-container:hover {
+        transform: translateY(-5px);
+      }
+      .tweet {
+        padding: 12px;
+        border-bottom: 1px solid #111010;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.3s ease;
+      }
+      .tweet:hover {
+        background-color: #000000;
+        transform: translateX(5px);
+      }
+      .heart {
+        color: gray;
+        cursor: pointer;
+        font-size: 20px;
+        transition: transform 0.2s ease, color 0.3s ease;
+      }
+      .heart:hover {
+        transform: scale(1.3);
+        color: #ff4b5c;
+      }
+      .back-btn {
+        background: #ff6a00;
+        margin-top: 10px;
+        transition: background 0.3s ease;
+      }
+      .back-btn:hover {
+        background: #ff4b5c;
+      }
+      .back-btn:active {
+        background: #e03e2d;
+      }
+      #displayPic {
+        border-radius: 50%;
+        margin-top: 10px;
+        border: 4px solid #fff;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+      }
+
+     
+      .tweet-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .tweet-container::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 5px;
+      }
+
+      .tweet-container::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Profile Form Section -->
+    <div id="profileForm" class="container">
+      <h2>Create Your Profile</h2>
+      <input type="text" id="name" placeholder="Name" />
+      <input type="date" id="birthday" />
+      <textarea id="bio" placeholder="Bio or About Me"></textarea>
+      <textarea id="quote" placeholder="Favorite Quote"></textarea>
+      <input type="file" id="profilePic" />
+      <button onclick="createProfile()">Create</button>
+    </div>
+
+    <!-- Profile Page Section -->
+    <div id="profilePage" class="container">
+      <h2 id="displayName"></h2>
+      <p id="displayBirthday"></p>
+      <p id="displayBio"></p>
+      <p id="displayQuote"></p>
+      <img id="displayPic" width="100" height="100" />
+      <br /><br />
+      <input type="text" id="tweetInput" placeholder="What's on your mind?" />
+      <button onclick="postTweet()">Post</button>
+      <div id="tweetFeed" class="tweet-container"></div>
+      <button class="back-btn" onclick="goBack()">Back</button>
+    </div>
+
+    <!-- Audio for Button Click -->
+    <audio id="clickSound" src="click-sound.mp3" preload="auto"></audio>
+
+    <script>
+      let tweetFeed = [];
+
+      // Play click sound when a button is clicked
+      function playClickSound() {
+        let clickSound = document.getElementById("clickSound");
+        clickSound.play();
+      }
+
+      function createProfile() {
+        playClickSound(); // Play sound when the button is clicked
+        document.getElementById("displayName").innerText =
+          document.getElementById("name").value;
+        document.getElementById("displayBirthday").innerText =
+          "Birthday: " + document.getElementById("birthday").value;
+        document.getElementById("displayBio").innerText =
+          document.getElementById("bio").value;
+        document.getElementById("displayQuote").innerText =
+          '"' + document.getElementById("quote").value + '"';
+
+        let file = document.getElementById("profilePic").files[0];
+        if (file) {
+          let reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("displayPic").src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+
+        document.getElementById("profileForm").style.display = "none";
+        document.getElementById("profilePage").style.display = "block";
+      }
+
+      function postTweet() {
+        playClickSound(); // Play sound when the button is clicked
+        let tweetText = document.getElementById("tweetInput").value;
+        if (tweetText !== "") {
+          let tweetContainer = document.createElement("div");
+          tweetContainer.className = "tweet";
+
+          let tweetContent = document.createElement("span");
+          tweetContent.innerText = tweetText;
+
+          let heart = document.createElement("span");
+          heart.className = "heart";
+          heart.innerHTML = "🤍";
+          heart.onclick = function () {
+            if (heart.innerHTML === "🤍") {
+              heart.innerHTML = "❤️";
+              heart.style.color = "red";
+            } else {
+              heart.innerHTML = "🤍";
+              heart.style.color = "gray";
+            }
+          };
+
+          tweetContainer.appendChild(tweetContent);
+          tweetContainer.appendChild(heart);
+
+          tweetFeed.push(tweetContainer); // Keep all posts, no removal
+
+          // Keep the feed updated with all tweets
+          updateTweetFeed();
+          document.getElementById("tweetInput").value = "";
+
+          // Scroll to the bottom of the feed to show the newest tweet
+          let tweetFeedContainer = document.getElementById("tweetFeed");
+          tweetFeedContainer.scrollTop = tweetFeedContainer.scrollHeight;
+        }
+      }
+
+      function updateTweetFeed() {
+        let tweetFeedContainer = document.getElementById("tweetFeed");
+        tweetFeedContainer.innerHTML = ""; // Clear current feed
+
+        // Append all posts in the order they were posted
+        for (let tweet of tweetFeed) {
+          tweetFeedContainer.appendChild(tweet);
+        }
+
+        // Scroll to the bottom to show the most recent tweet
+        tweetFeedContainer.scrollTop = tweetFeedContainer.scrollHeight;
+      }
+
+      function goBack() {
+        playClickSound(); // Play sound when the button is clicked
+        document.getElementById("profileForm").style.display = "block";
+        document.getElementById("profilePage").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
